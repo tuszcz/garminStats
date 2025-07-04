@@ -1,12 +1,10 @@
-name: Garmin to Google Drive
+name: Jednorazowy test Garmina
 
 on:
-  schedule:
-    - cron: '0 6 * * *'  # codziennie o 6:00 UTC (zmień godzinę jeśli chcesz)
-  workflow_dispatch:      # pozwala też uruchomić ręcznie
+  workflow_dispatch:  # pozwala uruchomić ręcznie z poziomu GitHub UI
 
 jobs:
-  run-script:
+  test-garmin:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,14 +15,21 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install garminconnect
 
-      - name: Create service account file
-        run: |
-          echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT }}" > service_account.json
-
-      - name: Run script
+      - name: Run Garmin test script
         env:
           GARMIN_USER: ${{ secrets.GARMIN_USER }}
           GARMIN_PASS: ${{ secrets.GARMIN_PASS }}
-        run: python garmin_to_gdrive.py
+        run: |
+          echo "import json
+import datetime
+from garminconnect import Garmin
+
+client = Garmin('${GARMIN_USER}', '${GARMIN_PASS}')
+client.login()
+today = datetime.date.today()
+stats = client.get_stats(today.isoformat())
+print(json.dumps(stats, indent=2))
+" > test_garmin.py
+          python test_garmin.py
