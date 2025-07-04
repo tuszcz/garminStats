@@ -10,8 +10,8 @@ from googleapiclient.http import MediaFileUpload
 GARMIN_USER = os.environ["GARMIN_USER"]
 GARMIN_PASS = os.environ["GARMIN_PASS"]
 
-# Google Drive - nazwa folderu docelowego (możesz zmienić)
-GDRIVE_FOLDER_NAME = "Garmin"
+# Google Drive - ID folderu docelowego (zdefiniujesz jako sekret)
+GDRIVE_FOLDER_ID = os.environ["GDRIVE_FOLDER_ID"]
 
 # Plik credentials do Service Account
 GOOGLE_SERVICE_ACCOUNT_FILE = "service_account.json"
@@ -33,27 +33,10 @@ def upload_to_gdrive(filename):
 
     service = build('drive', 'v3', credentials=creds)
 
-    # Sprawdź czy folder istnieje, jeśli nie – utwórz
-    folder_id = None
-    results = service.files().list(
-        q=f"name='{GDRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false",
-        spaces='drive',
-        fields='files(id, name)').execute()
-    items = results.get('files', [])
-    if items:
-        folder_id = items[0]['id']
-    else:
-        file_metadata = {
-            'name': GDRIVE_FOLDER_NAME,
-            'mimeType': 'application/vnd.google-apps.folder'
-        }
-        folder = service.files().create(body=file_metadata, fields='id').execute()
-        folder_id = folder.get('id')
-
-    # Upload pliku
+    # Upload pliku do wskazanego folderu
     file_metadata = {
         'name': filename,
-        'parents': [folder_id]
+        'parents': [GDRIVE_FOLDER_ID]
     }
     media = MediaFileUpload(filename, mimetype='application/json')
     file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
