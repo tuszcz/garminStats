@@ -14,7 +14,7 @@ GOOGLE_SERVICE_ACCOUNT_FILE = "service_account.json"
 def get_garmin_stats():
     client = Garmin(GARMIN_USER, GARMIN_PASS)
     client.login()
-    today = datetime.date.today()
+    today = datetime.datetime.now()
     stats = client.get_stats(today.isoformat())
     filename = f"garmin_{today}.json"
     with open(filename, "w") as f:
