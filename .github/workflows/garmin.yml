@@ -1,7 +1,7 @@
 name: Jednorazowy test Garmina
 
 on:
-  workflow_dispatch:  # pozwala uruchomić ręcznie z poziomu GitHub UI
+  workflow_dispatch:
 
 jobs:
   test-garmin:
@@ -21,15 +21,4 @@ jobs:
         env:
           GARMIN_USER: ${{ secrets.GARMIN_USER }}
           GARMIN_PASS: ${{ secrets.GARMIN_PASS }}
-        run: |
-          echo "import json
-import datetime
-from garminconnect import Garmin
-
-client = Garmin('${GARMIN_USER}', '${GARMIN_PASS}')
-client.login()
-today = datetime.date.today()
-stats = client.get_stats(today.isoformat())
-print(json.dumps(stats, indent=2))
-" > test_garmin.py
-          python test_garmin.py
+        run: python test_garmin.py
