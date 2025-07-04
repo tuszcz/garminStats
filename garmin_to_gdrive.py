@@ -6,14 +6,9 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-# Dane logowania do Garmina (zdefiniujesz jako sekrety w GitHub)
 GARMIN_USER = os.environ["GARMIN_USER"]
 GARMIN_PASS = os.environ["GARMIN_PASS"]
-
-# Google Drive - ID folderu docelowego (zdefiniujesz jako sekret)
 GDRIVE_FOLDER_ID = os.environ["GDRIVE_FOLDER_ID"]
-
-# Plik credentials do Service Account
 GOOGLE_SERVICE_ACCOUNT_FILE = "service_account.json"
 
 def get_garmin_stats():
@@ -30,10 +25,7 @@ def upload_to_gdrive(filename):
     SCOPES = ['https://www.googleapis.com/auth/drive.file']
     creds = service_account.Credentials.from_service_account_file(
         GOOGLE_SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-
     service = build('drive', 'v3', credentials=creds)
-
-    # Upload pliku do wskazanego folderu
     file_metadata = {
         'name': filename,
         'parents': [GDRIVE_FOLDER_ID]
