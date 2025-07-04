@@ -22,4 +22,4 @@ jobs:
           GARMIN_USER: ${{ secrets.GARMIN_USER }}
           GARMIN_PASS: ${{ secrets.GARMIN_PASS }}
           GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
-        run: python test_garmin.py
+        run: python garmin_to_gdrive.py
